@@ -1,8 +1,6 @@
 const PSD = require("psd");
 const rimraf = require("rimraf");
 const fs = require("fs");
-const { time } = require("console");
-const { fileURLToPath } = require("url");
 const psd = PSD.fromFile("./psd.psd");
 psd.parse();
 const root = "./images/";
@@ -33,6 +31,7 @@ function main() {
 
   // 导出图片
   tree.descendants().forEach(function (node) {
+    if (node.isGroup()) return;
     node.saveAsPng(`${root}${node.name}.png`).catch(function (err) {
       console.log(node.name);
       console.log(err.stack);
