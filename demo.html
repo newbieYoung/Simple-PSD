@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DEMO</title>
+    <style>
+      div {
+        border: 1px solid #000;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="./data.js"></script>
+    <script>
+      window.onload = function () {
+        filter(data, { top: 0, left: 0 });
+        main(data);
+      };
+
+      function filter(data, p) {
+        data.children.map(function (item, index) {
+          if (item.children) {
+            filter(item, { top: item.top, left: item.left });
+          }
+          item.top -= p.top;
+          item.left -= p.left;
+          delete item.bottom;
+          delete item.right;
+        });
+      }
+
+      function element(node) {
+        var html = "";
+        html += '<div style="position:absolute;';
+
+        if (node.width) {
+          html += "width:" + node.width + "px;";
+        }
+        if (node.height) {
+          html += "height:" + node.height + "px;";
+        }
+        if (node.top) {
+          html += "top:" + node.top + "px;";
+        }
+        if (node.left) {
+          html += "left:" + node.left + "px;";
+        }
+        if (node.bottom) {
+          html += "bottom:" + node.bottom + "px;";
+        }
+        if (node.right) {
+          html += "right:" + node.right + "px;";
+        }
+        html += '">';
+        html += children(node.children);
+        html += "</div>";
+        return html;
+      }
+
+      function children(children) {
+        var html = "";
+        if (children) {
+          for (var i = 0; i < children.length; i++) {
+            html += element(children[i]);
+          }
+        }
+        return html;
+      }
+
+      function main(data) {
+        var html = "";
+        var doc = data.document;
+        if (doc) {
+          doc.children = data.children;
+          html += element(doc);
+          document.body.style.transformOrigin = "0 0";
+          var minScale = Math.min(800 / doc.width, 800 / doc.height);
+          document.body.style.transform = "scale(" + minScale + ")";
+        }
+        document.body.innerHTML = html;
+      }
+    </script>
+  </body>
+</html>

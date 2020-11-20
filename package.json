@@ -1,0 +1,22 @@
+{
+  "name": "simple-psd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/newbieYoung/Simple-PSD.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/newbieYoung/Simple-PSD/issues"
+  },
+  "homepage": "https://github.com/newbieYoung/Simple-PSD#readme",
+  "dependencies": {
+    "psd": "^3.2.0"
+  }
+}
