@@ -1,41 +1,48 @@
 const PSD = require("psd");
+const rimraf = require("rimraf");
 const fs = require("fs");
-
+const { time } = require("console");
+const { fileURLToPath } = require("url");
 const psd = PSD.fromFile("./psd.psd");
 psd.parse();
+const root = "./images/";
 const tree = psd.tree();
-const json = tree.export();
 
-// 保存图片
-// function saveImage(children, pNames) {
-//   let names = pNames.slice();
-//   children.map(function (node, index) {
-//     let paths = names.concat(`${node.name}`);
-//     if (node.image) {
-//       let image = paths.reduce((img, cur) => {
-//         return `${img}.${cur}`;
-//       }, "");
-//       let url = `${image}_${index}.png`;
-//       // 文件名首位不能为 .
-//       if (url[0] === ".") {
-//         url = url.substring(1, url.length);
-//       }
-//       node.image.url = url;
-
-//       console.log(node.depth());
-//       node.layer.image.saveAsPng(node.image.url);
-//     }
-//     if (node.children) {
-//       saveImage(node.children, paths);
-//     }
-//   });
-// }
-
-// function main(node) {
-//   node.children.map((item, index) => {});
-// }
-
-fs.writeFile("data.js", `const data = ${JSON.stringify(json)}`, function (err) {
-  if (err) throw err;
-  console.log("Saved successfully"); //文件被保存
+// 重置资源
+rimraf(root, function () {
+  fs.mkdirSync(root);
+  main();
 });
+
+function main() {
+  // 过滤
+  let timestamp = Date.now();
+  function filter(node) {
+    node.name = `${node.name}_${timestamp++}`;
+    const children = node.children();
+    if (children) {
+      children.map((item) => {
+        filter(item);
+      });
+    }
+  }
+  filter(tree);
+
+  // 导出 json
+  const json = tree.export();
+
+  // 导出图片
+  tree.descendants().forEach(function (node) {
+    node.saveAsPng(`${root}${node.name}.png`).catch(function (err) {
+      console.log(node.name);
+      console.log(err.stack);
+    });
+  });
+
+  fs.writeFile("data.js", `const data = ${JSON.stringify(json)}`, function (
+    err
+  ) {
+    if (err) throw err;
+    console.log("Saved successfully"); //文件被保存
+  });
+}

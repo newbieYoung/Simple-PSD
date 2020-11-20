@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/newbieYoung/Simple-PSD#readme",
   "dependencies": {
-    "psd": "^3.2.0"
+    "psd": "^3.2.0",
+    "rimraf": "^3.0.2"
   }
 }

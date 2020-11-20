@@ -52,6 +52,13 @@
         if (node.right) {
           html += "right:" + node.right + "px;";
         }
+
+        if (node.image) {
+          html +=
+            "background-image:url('./images/" +
+            node.name +
+            ".png');background-size:100% 100%;";
+        }
         html += '">';
         html += children(node.children);
         html += "</div>";
@@ -62,7 +69,7 @@
         var html = "";
         if (children) {
           for (var i = 0; i < children.length; i++) {
-            html += element(children[i]);
+            html += element(children[children.length - i - 1]);
           }
         }
         return html;
