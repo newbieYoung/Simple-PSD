@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JS DEMO</title>
+    <title>Python DEMO</title>
     <style>
       div {
-        border: 1px solid #000;
+        /* border: 1px solid #000; */
       }
     </style>
   </head>
@@ -30,9 +30,14 @@
         });
       }
 
-      function element(node) {
+      function element(node, root) {
         var html = "";
         html += '<div style="position:absolute;';
+
+        if (root) {
+          // 根节点
+          html += "overflow:hidden;border:2px solid red;";
+        }
 
         if (node.width) {
           html += "width:" + node.width + "px;";
@@ -46,17 +51,11 @@
         if (node.left) {
           html += "left:" + node.left + "px;";
         }
-        if (node.bottom) {
-          html += "bottom:" + node.bottom + "px;";
-        }
-        if (node.right) {
-          html += "right:" + node.right + "px;";
-        }
 
         if (node.image) {
           html +=
             "background-image:url('./images/" +
-            node.name +
+            node.layer_id +
             ".png');background-size:100% 100%;";
         }
         html += '">';
@@ -69,7 +68,7 @@
         var html = "";
         if (children) {
           for (var i = 0; i < children.length; i++) {
-            html += element(children[children.length - i - 1]);
+            html += element(children[i], false);
           }
         }
         return html;
@@ -77,14 +76,11 @@
 
       function main(data) {
         var html = "";
-        var doc = data.document;
-        if (doc) {
-          doc.children = data.children;
-          html += element(doc);
-          document.body.style.transformOrigin = "0 0";
-          var minScale = Math.min(800 / doc.width, 800 / doc.height);
-          document.body.style.transform = "scale(" + minScale + ")";
-        }
+        html += element(data, true);
+
+        document.body.style.transformOrigin = "0 0";
+        var minScale = Math.min(800 / data.width, 800 / data.height);
+        document.body.style.transform = "scale(" + minScale + ")";
         document.body.innerHTML = html;
       }
     </script>
