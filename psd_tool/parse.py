@@ -21,14 +21,56 @@ tree['width'] = psd.width
 tree['height'] = psd.height
 tree['children'] = []
 
+def objToJson(obj):
+  return str(obj).replace("u'","'").replace("'",'"').replace('False','false').replace('True','true')
+
+def string(val):
+  return str(val).replace("u'","'").replace("'",'')
+
+def colortoRGBA(color):
+  return 'rgba('+str(int(color[1]*255))+','+str(int(color[2]*255))+','+str(int(color[3]*255))+','+str(int(color[0]*255))+')'
+
+# 解析文本图层
+def parseText(layer, obj):
+  obj['texts'] = []
+  text = layer.engine_dict['Editor']['Text'].value
+  fontset = layer.resource_dict['FontSet']
+  runlength = layer.engine_dict['StyleRun']['RunLengthArray']
+  rundata = layer.engine_dict['StyleRun']['RunArray']
+  index = 0
+  maxLeading = 0
+
+  for length, style in zip(runlength, rundata): # 文本分段
+      item = {}
+      substring = text[index:index + length]
+      stylesheet = style['StyleSheet']['StyleSheetData']
+      fillColor = stylesheet['FillColor']
+      font = fontset[stylesheet['Font']]
+      index += length
+      
+      leading = stylesheet['Leading']
+      if(maxLeading<leading):
+        maxLeading = leading
+
+      item['text'] = substring
+      item['fontSize'] = string(stylesheet['FontSize'])
+      item['color'] = colortoRGBA(fillColor['Values'])
+      item['lineHeight'] = string(leading)
+      item['fontName'] = string(font['Name'])
+      obj['texts'].append(item)
+  
+  height = obj['height']
+  if(height != maxLeading):
+    obj['height'] = string(maxLeading)
+    obj['top'] = obj['top'] - (maxLeading - height)/2
+
+# 遍历图层
 def parse(layer, obj):
   if(layer.is_visible()): # 仅处理可见图层
     layer_name = str(layer.name)
     print('-------')
     print(layer_name)
     print(layer.layer_id)
-    print(layer.has_effects())
-    print(layer.effects)
 
     obj['layer_id'] = layer.layer_id
     obj['width'] = layer.width
@@ -44,11 +86,14 @@ def parse(layer, obj):
         obj['children'].append(item)
         parse(child, item)
     else:
-      obj['image'] = {}
-      try: # 优先使用复合图片
-        layer.composite().save('/Users/bytedance/Projects/Simple-PSD/psd_tool/images/'+str(layer.layer_id)+'.png')
-      except: # 某些情况下会报错，降级使用非复合图片
-        layer.topil().save('/Users/bytedance/Projects/Simple-PSD/psd_tool/images/'+str(layer.layer_id)+'.png')
+      if(layer.kind == 'type' and layer.text): # TypeLayer text
+        parseText(layer, obj)
+      else:  
+        obj['image'] = {}
+        try: # 优先使用复合图片
+          layer.composite().save('/Users/bytedance/Projects/Simple-PSD/psd_tool/images/'+str(layer.layer_id)+'.png')
+        except: # 某些情况下会报错，降级使用非复合图片
+          layer.topil().save('/Users/bytedance/Projects/Simple-PSD/psd_tool/images/'+str(layer.layer_id)+'.png')
 
 #循环遍历
 for layer in psd:
