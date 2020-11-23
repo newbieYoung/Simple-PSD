@@ -23,13 +23,21 @@ function colorToRGBA(color) {
 function parseText(node, obj) {
   let typeTool = node.layer.typeTool();
   let styles = typeTool.styles();
-  obj.text = {
-    value: typeTool.textValue,
-    font: typeTool.fonts().join(),
-    lineHeight: styles.Leading[0],
-    fontSize: styles.FontSize[0],
-    color: colorToRGBA(styles.FillColor[0].Values),
-  };
+  let lineHeight = styles.Leading[0];
+  obj.texts = [
+    {
+      text: typeTool.textValue,
+      font: typeTool.fonts().join(),
+      lineHeight: lineHeight,
+      fontSize: styles.FontSize[0],
+      color: colorToRGBA(styles.FillColor[0].Values),
+    },
+  ];
+
+  if (lineHeight != obj.height) {
+    obj.top = obj.top - (lineHeight - obj.height) / 2;
+    obj.height = lineHeight;
+  }
 }
 
 // 过滤

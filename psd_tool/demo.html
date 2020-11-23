@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Python DEMO</title>
+    <title>psd-tool DEMO</title>
     <style>
       div {
         /* border: 1px solid #000; */
@@ -54,7 +54,7 @@
         }
 
         // 透明度
-        if (node.opacity) {
+        if (node.opacity >= 0) {
           html += "opacity:" + (node.opacity / 255).toFixed(2) + ";";
         }
 

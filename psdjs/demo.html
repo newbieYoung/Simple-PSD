@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>psdjs node DEMO</title>
+    <title>psd.js DEMO</title>
     <style>
       div {
         border: 1px solid #000;
@@ -25,13 +25,21 @@
           }
           item.top -= p.top;
           item.left -= p.left;
+          delete item.bottom;
+          delete item.right;
         });
       }
 
-      function element(node) {
+      function element(node, root) {
         var html = "";
         html += '<div style="position:absolute;';
 
+        if (root) {
+          // 根节点
+          html += "overflow:hidden;border:2px solid red;";
+        }
+
+        // 尺寸
         if (node.width) {
           html += "width:" + node.width + "px;";
         }
@@ -44,13 +52,13 @@
         if (node.left) {
           html += "left:" + node.left + "px;";
         }
-        if (node.bottom) {
-          html += "bottom:" + node.bottom + "px;";
-        }
-        if (node.right) {
-          html += "right:" + node.right + "px;";
+
+        // 透明度
+        if (node.opacity >= 0) {
+          html += "opacity:" + (node.opacity / 255).toFixed(2) + ";";
         }
 
+        // 图片
         if (node.image) {
           html +=
             "background-image:url('./images/" +
@@ -58,6 +66,26 @@
             "');background-size:100% 100%;";
         }
         html += '">';
+
+        // 文本
+        if (node.texts) {
+          for (var i = 0; i < node.texts.length; i++) {
+            var item = node.texts[i];
+            html +=
+              "<span style='vertical-align:top;font-size:" +
+              item.fontSize +
+              "px;color:" +
+              item.color +
+              ";line-height:" +
+              item.lineHeight +
+              "px;font-family:" +
+              item.font +
+              ";'>" +
+              item.text +
+              "</span>";
+          }
+        }
+
         html += children(node.children);
         html += "</div>";
         return html;
@@ -67,14 +95,16 @@
         var html = "";
         if (children) {
           for (var i = 0; i < children.length; i++) {
-            html += element(children[children.length - i - 1]);
+            html += element(children[children.length - 1 - i], false);
           }
         }
         return html;
       }
 
       function main(data) {
-        var html = element(data);
+        var html = "";
+        html += element(data, true);
+
         document.body.style.transformOrigin = "0 0";
         var minScale = Math.min(800 / data.width, 800 / data.height);
         document.body.style.transform = "scale(" + minScale + ")";
