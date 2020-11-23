@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input id="file" type="file" />
+    <script src="./dist/psd.js"></script>
+    <script src="./dist/FileSaver.js"></script>
+    <script>
+      window.onload = function () {
+        const PSD = require("psd");
+        const $file = document.querySelector("#file");
+        $file.addEventListener("change", function () {
+          PSD.fromDroppedFile(this.files[0]).then(function (psd) {
+            const tree = psd.tree();
+            const json = parse(tree);
+            console.log(json);
+            const blob = new Blob(["const data = " + JSON.stringify(json)], {
+              type: "text/plain;charset=utf-8",
+            });
+            saveAs(blob, "data.js");
+          });
+        });
+      };
+
+      // uuid
+      var timestamp = Date.now();
+      function newId() {
+        return timestamp++;
+      }
+
+      // 保存图片
+      function saveImage(node, obj) {
+        obj.image = node.layer.image.toBase64();
+      }
+
+      // ---
+
+      // 转 rgba
+      function colorToRGBA(color) {
+        return (
+          "rgba(" +
+          parseInt(color[1] * 255) +
+          "," +
+          parseInt(color[2] * 255) +
+          "," +
+          parseInt(color[3] * 255) +
+          "," +
+          parseInt(color[0] * 255) +
+          ")"
+        );
+      }
+
+      // 解析文本图层
+      function parseText(node, obj) {
+        let typeTool = node.layer.typeTool();
+        let styles = typeTool.styles();
+        obj.text = {
+          value: typeTool.textValue,
+          font: typeTool.fonts().join(),
+          lineHeight: styles.Leading[0],
+          fontSize: styles.FontSize[0],
+          color: colorToRGBA(styles.FillColor[0].Values),
+        };
+      }
+
+      // 过滤
+      function parse(node) {
+        let layer = node.layer;
+        let json = {};
+        json.width = node.width;
+        json.height = node.height;
+        json.id = newId();
+        json.opacity = layer.opacity == null ? 255 : layer.opacity;
+        json.children = [];
+
+        if (node.isGroup()) {
+          // 组
+        } else {
+          if (layer.typeTool) {
+            parseText(node, json);
+          } else if (layer.image) {
+            saveImage(node, json);
+          }
+        }
+
+        let children = node._children;
+        if (children) {
+          for (let i = 0; i < children.length; i++) {
+            let item = children[i];
+            if (item.layer.visible) {
+              json.children.push(parse(item));
+            }
+          }
+        }
+
+        return json;
+      }
+    </script>
+  </body>
+</html>

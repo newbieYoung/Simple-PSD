@@ -77,7 +77,6 @@ def parse(layer, obj):
     obj['height'] = layer.height
     obj['top'] = layer.top
     obj['left'] = layer.left
-    obj['is_visible'] = layer.is_visible()
     obj['children'] = []
     
     if(layer.is_group()):

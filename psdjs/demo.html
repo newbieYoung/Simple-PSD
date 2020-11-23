@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JS DEMO</title>
+    <title>psdjs node DEMO</title>
     <style>
       div {
         border: 1px solid #000;
@@ -25,8 +25,6 @@
           }
           item.top -= p.top;
           item.left -= p.left;
-          delete item.bottom;
-          delete item.right;
         });
       }
 
@@ -56,8 +54,8 @@
         if (node.image) {
           html +=
             "background-image:url('./images/" +
-            node.name +
-            ".png');background-size:100% 100%;";
+            node.image +
+            "');background-size:100% 100%;";
         }
         html += '">';
         html += children(node.children);
@@ -76,15 +74,10 @@
       }
 
       function main(data) {
-        var html = "";
-        var doc = data.document;
-        if (doc) {
-          doc.children = data.children;
-          html += element(doc);
-          document.body.style.transformOrigin = "0 0";
-          var minScale = Math.min(800 / doc.width, 800 / doc.height);
-          document.body.style.transform = "scale(" + minScale + ")";
-        }
+        var html = element(data);
+        document.body.style.transformOrigin = "0 0";
+        var minScale = Math.min(800 / data.width, 800 / data.height);
+        document.body.style.transform = "scale(" + minScale + ")";
         document.body.innerHTML = html;
       }
     </script>
