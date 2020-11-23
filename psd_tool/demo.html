@@ -18,13 +18,13 @@
         main(data);
       };
 
-      function filter(data, p) {
+      function filter(data) {
         data.children.map(function (item, index) {
           if (item.children) {
-            filter(item, { top: item.top, left: item.left });
+            filter(item);
           }
-          item.top -= p.top;
-          item.left -= p.left;
+          item.top -= data.top;
+          item.left -= data.left;
           delete item.bottom;
           delete item.right;
         });

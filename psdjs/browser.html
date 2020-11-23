@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>psd.js browser DEMO</title>
   </head>
   <body>
     <input id="file" type="file" />
@@ -34,6 +34,20 @@
 
       // 保存图片
       function saveImage(node, obj) {
+        // objecturl
+        // var canvas = document.createElement("canvas");
+        // canvas.width = obj.width;
+        // canvas.height = obj.height;
+        // var ctx = canvas.getContext("2d");
+        // var png = node.layer.image.toPng();
+        // png.onload = function () {
+        //   // onload or canvas drawImage empty
+        //   ctx.drawImage(png, 0, 0, obj.width, obj.height);
+        //   canvas.toBlob(function (blob) {
+        //     obj.image = URL.createObjectURL(blob);
+        //   });
+        // };
+
         obj.image = node.layer.image.toBase64();
       }
 
@@ -83,6 +97,7 @@
         json.height = node.height;
         json.top = node.top;
         json.left = node.left;
+        json.name = node.name;
         json.id = newId();
         json.opacity = layer.opacity == null ? 255 : layer.opacity;
         json.children = [];

@@ -48,6 +48,7 @@ function parse(node) {
   json.height = node.height;
   json.top = node.top;
   json.left = node.left;
+  json.name = node.name;
   json.id = newId();
   json.opacity = layer.opacity == null ? 255 : layer.opacity;
   json.children = [];
@@ -93,20 +94,21 @@ function newId() {
 }
 
 // remotefile
-http.get("http://127.0.0.1:5500/psdjs/psd.psd", (res) => {
-  res.setEncoding("binary");
-  let chunks = [];
-  res.on("data", (chunk) => {
-    chunks.push(Buffer.from(chunk, "binary"));
-  });
-  res.on("end", () => {
-    let binary = Buffer.concat(chunks);
-    main(new PSD(binary));
-  });
-});
+// http.get("http://127.0.0.1:5500/psdjs/psd.psd", (res) => {
+//   res.setEncoding("binary");
+//   let chunks = [];
+//   res.on("data", (chunk) => {
+//     chunks.push(Buffer.from(chunk, "binary"));
+//   });
+//   res.on("end", () => {
+//     let binary = Buffer.concat(chunks);
+//     main(new PSD(binary));
+//   });
+// });
 
 // localfile
-// const psd = PSD.fromFile("./psd.psd");
+const psd = PSD.fromFile("./psd.psd");
+main(psd);
 
 function main(psd) {
   // 重置资源;

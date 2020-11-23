@@ -19,6 +19,10 @@ psd = PSDImage.open('/Users/bytedance/Projects/Simple-PSD/psd_tool/psd.psd')
 tree = {}
 tree['width'] = psd.width
 tree['height'] = psd.height
+tree['name'] = psd.name
+tree['top'] = psd.top
+tree['left'] = psd.left
+tree['opacity'] = 255
 tree['children'] = []
 
 def objToJson(obj):
@@ -73,6 +77,7 @@ def parse(layer, obj):
     print(layer.layer_id)
 
     obj['id'] = layer.layer_id
+    obj['name'] = layer_name
     obj['width'] = layer.width
     obj['height'] = layer.height
     obj['top'] = layer.top
