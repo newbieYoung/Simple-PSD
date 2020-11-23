@@ -56,7 +56,7 @@ def parseText(layer, obj):
       item['fontSize'] = string(stylesheet['FontSize'])
       item['color'] = colortoRGBA(fillColor['Values'])
       item['lineHeight'] = string(leading)
-      item['fontName'] = string(font['Name'])
+      item['font'] = string(font['Name'])
       obj['texts'].append(item)
   
   height = obj['height']
@@ -72,11 +72,12 @@ def parse(layer, obj):
     print(layer_name)
     print(layer.layer_id)
 
-    obj['layer_id'] = layer.layer_id
+    obj['id'] = layer.layer_id
     obj['width'] = layer.width
     obj['height'] = layer.height
     obj['top'] = layer.top
     obj['left'] = layer.left
+    obj['opacity'] = layer.opacity
     obj['children'] = []
     
     if(layer.is_group()):
@@ -88,11 +89,11 @@ def parse(layer, obj):
       if(layer.kind == 'type' and layer.text): # TypeLayer text
         parseText(layer, obj)
       else:  
-        obj['image'] = {}
+        obj['image'] = str(layer.layer_id)+'.png'
         try: # 优先使用复合图片
-          layer.composite().save('/Users/bytedance/Projects/Simple-PSD/psd_tool/images/'+str(layer.layer_id)+'.png')
+          layer.composite().save('/Users/bytedance/Projects/Simple-PSD/psd_tool/images/'+obj['image'])
         except: # 某些情况下会报错，降级使用非复合图片
-          layer.topil().save('/Users/bytedance/Projects/Simple-PSD/psd_tool/images/'+str(layer.layer_id)+'.png')
+          layer.topil().save('/Users/bytedance/Projects/Simple-PSD/psd_tool/images/'+obj['image'])
 
 #循环遍历
 for layer in psd:

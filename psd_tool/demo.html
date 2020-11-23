@@ -53,12 +53,17 @@
           html += "left:" + node.left + "px;";
         }
 
+        // 透明度
+        if (node.opacity) {
+          html += "opacity:" + (node.opacity / 255).toFixed(2) + ";";
+        }
+
         // 图片
         if (node.image) {
           html +=
             "background-image:url('./images/" +
-            node.layer_id +
-            ".png');background-size:100% 100%;";
+            node.image +
+            "');background-size:100% 100%;";
         }
         html += '">';
 
@@ -74,7 +79,7 @@
               ";line-height:" +
               item.lineHeight +
               "px;font-family:" +
-              item.fontName +
+              item.font +
               ";'>" +
               item.text +
               "</span>";
