@@ -52,7 +52,7 @@ def parseText(layer, obj):
       font = fontset[stylesheet['Font']]
       index += length
       
-      leading = stylesheet['Leading']
+      leading = stylesheet.get("Leading", obj['height']) # PS 设置 Leading auto 时，解析结果中并不存在该字段
       if(maxLeading<leading):
         maxLeading = leading
 
@@ -91,9 +91,9 @@ def parse(layer, obj):
         obj['children'].append(item)
         parse(child, item)
     else:
-      if(layer.kind == 'type' and layer.text): # TypeLayer text
-        parseText(layer, obj)
-      else:  
+      #if(layer.kind == 'type' and layer.text): # TypeLayer text
+      #  parseText(layer, obj)
+      #else:  
         obj['image'] = str(layer.layer_id)+'.png'
         try: # 优先使用复合图片
           layer.composite().save('/Users/bytedance/Projects/Simple-PSD/psd_tool/images/'+obj['image'])
