@@ -23,7 +23,7 @@ function colorToRGBA(color) {
 function parseText(node, obj) {
   let typeTool = node.layer.typeTool();
   let styles = typeTool.styles();
-  let lineHeight = styles.Leading[0];
+  let lineHeight = styles.Leading ? styles.Leading[0] : obj.height; // PS 设置 Leading auto 时，解析结果中并不存在该字段
   obj.texts = [
     {
       text: typeTool.textValue,
@@ -56,9 +56,11 @@ function parse(node) {
   if (node.isGroup()) {
     // 组
   } else {
-    if (layer.typeTool) {
-      parseText(node, json);
-    } else if (layer.image) {
+    // 文本图层暂时直接导出图片
+    //if (layer.typeTool) {
+    //  parseText(node, json);
+    //}
+    if (layer.image) {
       saveImage(node, json);
     }
   }
